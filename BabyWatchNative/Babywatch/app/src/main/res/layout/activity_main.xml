@@ -27,14 +27,17 @@
 
 
     <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:id="@+id/startStopButton"
-        android:src="@drawable/startbutton10"
+        android:src="@drawable/startbutton"
         android:onClick="onClicked"
         android:layout_above="@+id/pebbelStatus"
         android:layout_centerHorizontal="true"
-        android:background="@null"/>
+        android:background="@null"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:padding="5dp"/>
 
 
 </RelativeLayout>
