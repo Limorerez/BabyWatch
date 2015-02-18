@@ -1,13 +1,28 @@
 package com.example.sap.babywatch;
 
 import android.content.Context;
+import android.content.Intent;
+import android.provider.SyncStateContract;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+import java.util.*;
+import com.getpebble.android.kit.Constants;
+import com.getpebble.android.kit.PebbleKit;
+import com.getpebble.android.kit.util.PebbleDictionary;
+
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -19,6 +34,16 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
+    UUID uuid = UUID.fromString("4f1ba7a6-5836-48cf-986e-dc9f3f8916bb");
+    public void startWatchApp(View view) {
+        PebbleKit.startAppOnPebble(getApplicationContext(), uuid);
+    }
+
+    // Send a broadcast to close the specified application on the connected Pebble
+    public void stopWatchApp(View view) {
+        PebbleKit.closeAppOnPebble(getApplicationContext(), uuid);
+    }
+
     private void handleStart(){
         showMessage("Start");
     }
@@ -26,6 +51,24 @@ public class MainActivity extends ActionBarActivity {
     private void handleStop(){
         showMessage("Stop");
     }
+
+    public void sendAlertToPebble() {
+        final Intent i = new Intent("com.getpebble.action.SEND_NOTIFICATION");
+
+        final Map data = new HashMap();
+        data.put("title", "Test Message");
+        data.put("body", "Whoever said nothing was impossible never tried to slam a revolving door.");
+        final JSONObject jsonData = new JSONObject(data);
+        final String notificationData = new JSONArray().put(jsonData).toString();
+
+        i.putExtra("messageType", "PEBBLE_ALERT");
+        i.putExtra("sender", "MyAndroidApp");
+        i.putExtra("notificationData", notificationData);
+
+        //Log.d(TAG, "About to send a modal alert to Pebble: " + notificationData);
+        sendBroadcast(i);
+    }
+
 
     private void showMessage(String str){
         Context context = getApplicationContext();
@@ -41,6 +84,7 @@ public class MainActivity extends ActionBarActivity {
 
         if (isStart) {
                this.handleStart();
+               this.sendAlertToPebble();
         } else {
             this.handleStop();
 
