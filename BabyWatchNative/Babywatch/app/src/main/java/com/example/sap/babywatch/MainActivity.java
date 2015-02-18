@@ -3,9 +3,6 @@ package com.example.sap.babywatch;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.provider.SyncStateContract;
-import android.support.v7.app.ActionBarActivity;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
@@ -17,22 +14,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import java.util.*;
-import com.getpebble.android.kit.Constants;
 import com.getpebble.android.kit.PebbleKit;
-import com.getpebble.android.kit.util.PebbleDictionary;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
-
-import com.getpebble.android.kit.PebbleKit;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -185,7 +177,7 @@ public class MainActivity extends ActionBarActivity {
     public void onToggleClicked(View view){
         // Is the toggle on?
         boolean isStart = ((ToggleButton) view).isChecked();
-        LineChart chart = (LineChart) findViewById(R.id.chart);
+        chart = (LineChart) findViewById(R.id.chart);
 
 
         if (isStart) {
