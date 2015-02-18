@@ -10,9 +10,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.getpebble.android.kit.PebbleKit;
 import com.github.mikephil.charting.charts.LineChart;
@@ -35,11 +35,15 @@ public class MainActivity extends ActionBarActivity {
 
     TextView statusTextView;
     Boolean pebbleConnected;
-    ToggleButton startStopBtn;
+    ImageButton startStopBtn;
     LineChart chart;
+
     //Pebble EA76 device
     final UUID ORANGE_UUID = UUID.fromString("749ebe87-42a5-4cb9-8ad3-a9778c52661b");
     final UUID PEBBLE_APP_UUID = ORANGE_UUID;
+    final int STOP_BTN_RES_ID = R.drawable.stopbutton10;
+    final int START_BTN_RES_ID = R.drawable.startbutton10;
+    boolean isStart = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +52,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         statusTextView = (TextView) findViewById(R.id.pebbelStatus);
         statusTextView.setText("Waiting for Pebble Status...");
-        startStopBtn = (ToggleButton) findViewById(R.id.startStop);
+        startStopBtn = (ImageButton) findViewById(R.id.startStopButton);
 
         final Handler handler = new Handler();
         final Runnable r = new Runnable() {
@@ -88,7 +92,7 @@ public class MainActivity extends ActionBarActivity {
         for ( int i = 0 ; i < 15 ; i++) {
             this.addEntry(chart.getData(),i);
         }
-        chart.animateXY(20,20);
+        chart.animateXY(20, 20);
         chart.refreshDrawableState();
 
     }
@@ -141,14 +145,12 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void handleStart(){
-
         showMessage("Start Listening...");
         displaySpeechRecognizer();
-
     }
 
     private void handleStop(){
-        showMessage("Stop");
+        showMessage("Stopped");
     }
 
     public void sendAlertToPebble() {
@@ -178,14 +180,16 @@ public class MainActivity extends ActionBarActivity {
         toast.show();
     }
 
-    public void onToggleClicked(View view){
-        // Is the toggle on?
-        boolean isStart = ((ToggleButton) view).isChecked();
+    public void onClicked(View view){
+        isStart = !isStart;
+
         chart = (LineChart) findViewById(R.id.chart);
 
         if (isStart) {
+            startStopBtn.setImageResource(STOP_BTN_RES_ID);
             this.handleStart();
         } else {
+            startStopBtn.setImageResource(START_BTN_RES_ID);
             this.handleStop();
             chart.clear();
         }

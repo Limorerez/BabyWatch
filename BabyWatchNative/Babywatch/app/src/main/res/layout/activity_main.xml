@@ -13,19 +13,8 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_above="@+id/startStop" />
+        android:layout_above="@+id/startStopButton" />
 
-    <ToggleButton
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textOff="Start"
-        android:textOn="Stop"
-        android:onClick="onToggleClicked"
-        android:id="@+id/startStop"
-        android:layout_marginBottom="0dp"
-        android:layout_above="@+id/addData"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="match_parent"
@@ -37,16 +26,15 @@
         android:editable="false" />
 
 
-
-    <Button
-        android:layout_width="match_parent"
+    <ImageButton
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="add data"
-        android:id="@+id/addData"
-        android:onClick="addData"
+        android:id="@+id/startStopButton"
+        android:src="@drawable/startbutton10"
+        android:onClick="onClicked"
         android:layout_above="@+id/pebbelStatus"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_centerHorizontal="true"
+        android:background="@null"/>
 
 
 </RelativeLayout>
