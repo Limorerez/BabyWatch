@@ -1,2 +1,2 @@
-C:\Users\i040922\InnoJam\BabyWatch\babywatch\platforms\android\ant-build\AndroidManifest.xml : \
-C:\Users\i040922\InnoJam\BabyWatch\babywatch\platforms\android\AndroidManifest.xml \
+C:\InnoJam\2015\BabyWatch\BabyWatchApp\platforms\android\ant-build\AndroidManifest.xml : \
+C:\InnoJam\2015\BabyWatch\BabyWatchApp\platforms\android\AndroidManifest.xml \
