@@ -37,6 +37,9 @@ public class MainActivity extends ActionBarActivity {
     Boolean pebbleConnected;
     ToggleButton startStopBtn;
     LineChart chart;
+    //Pebble EA76 device
+    final UUID ORANGE_UUID = UUID.fromString("749ebe87-42a5-4cb9-8ad3-a9778c52661b");
+    final UUID PEBBLE_APP_UUID = ORANGE_UUID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,18 +57,15 @@ public class MainActivity extends ActionBarActivity {
                 pebbleConnected = PebbleKit.isWatchConnected(getApplicationContext());
                 startStopBtn.setEnabled(pebbleConnected);
                 if (pebbleConnected) {
-                    statusTextView.setText("Pebble is now connected");
+                    statusTextView.setText("Pebble device is connected");
 
                 } else {
-                    statusTextView.setText("Pebble is disconnected");
+                    statusTextView.setText("Pebble device is disconnected");
                 }
             }
         };
         handler.postDelayed(r, 0000);
     }
-
-
-    UUID PEBBLE_APP_UUID = UUID.fromString("4f1ba7a6-5836-48cf-986e-dc9f3f8916bb");
 
     private void addEntry(LineData lineData, int count){
 
@@ -82,11 +82,15 @@ public class MainActivity extends ActionBarActivity {
 
     public void addData(View view){
         LineChart chart = (LineChart) findViewById(R.id.chart);
+        chart.setUnit("dB Level");
+        chart.setDrawYValues(false);
+        chart.setDescription(" ");
         for ( int i = 0 ; i < 15 ; i++) {
             this.addEntry(chart.getData(),i);
         }
         chart.animateXY(20,20);
         chart.refreshDrawableState();
+
     }
     private LineData setData(int count, float range) {
 
@@ -106,7 +110,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         // create a dataset and give it a type
-        LineDataSet set1 = new LineDataSet(yVals, "DataSet 1");
+        LineDataSet set1 = new LineDataSet(yVals, "dB");
 
         set1.setLineWidth(2f);
         set1.setColor(ColorTemplate.getHoloBlue());
@@ -151,8 +155,8 @@ public class MainActivity extends ActionBarActivity {
         final Intent i = new Intent("com.getpebble.action.SEND_NOTIFICATION");
 
         final Map data = new HashMap();
-        data.put("title", "Baby's Status");
-        data.put("body", "Hurry! your baby is crying.");
+        data.put("title", "Baby is crying!");
+        data.put("body", "");
         final JSONObject jsonData = new JSONObject(data);
         final String notificationData = new JSONArray().put(jsonData).toString();
 
@@ -179,17 +183,11 @@ public class MainActivity extends ActionBarActivity {
         boolean isStart = ((ToggleButton) view).isChecked();
         chart = (LineChart) findViewById(R.id.chart);
 
-
         if (isStart) {
             this.handleStart();
         } else {
             this.handleStop();
             chart.clear();
-         //   chart.setData(this.setData(55,55));
-         //   chart.animateY(4500);
-        //    chart.refreshDrawableState();
-
-
         }
     }
 

@@ -12,7 +12,8 @@
         android:checked="false"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/startStop" />
 
     <ToggleButton
         android:layout_width="match_parent"
