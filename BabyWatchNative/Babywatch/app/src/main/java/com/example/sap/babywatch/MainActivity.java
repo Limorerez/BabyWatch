@@ -2,16 +2,17 @@ package com.example.sap.babywatch;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.getpebble.android.kit.PebbleKit;
-
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,10 +24,26 @@ import java.util.UUID;
 
 public class MainActivity extends ActionBarActivity {
 
+    TextView statusTextView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        statusTextView = (TextView) findViewById(R.id.pebbelStatus);
+        statusTextView.setText("Waiting for Pebble Status...");
+
+        final Handler handler = new Handler();
+        final Runnable r = new Runnable() {
+            public void run() {
+                handler.postDelayed(this, 1000);
+                if (PebbleKit.isWatchConnected(getApplicationContext())) {
+                    statusTextView.setText("Pebble is now connected");
+                } else {
+                    statusTextView.setText("Pebble is disconnected");
+                }
+            }
+        };
+        handler.postDelayed(r, 0000);
     }
 
 
@@ -108,4 +125,33 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+//    private Timer timer;
+//    private TimerTask timerTask;
+//
+//    public void onPause(){
+//        super.onPause();
+//        timer.cancel();
+//    }
+//
+//    public void onResume(){
+//        super.onResume();
+//        try {
+//            timer = new Timer();
+//            timerTask = new TimerTask() {
+//                @Override
+//                public void run() {
+//                    if (PebbleKit.isWatchConnected(getApplicationContext())) {
+//                        statusTextView.setText("Pebble is now connected");
+//                    } else {
+//                        statusTextView.setText("Pebble is disconnected");
+//                    }
+//
+//                }
+//            };
+//            timer.schedule(timerTask, 30000, 30000);
+//        } catch (IllegalStateException e){
+//            android.util.Log.i("Status", "resume error");
+//        }
+//    }
 }
