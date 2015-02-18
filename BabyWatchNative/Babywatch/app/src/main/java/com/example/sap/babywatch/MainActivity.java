@@ -2,6 +2,10 @@ package com.example.sap.babywatch;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.provider.SyncStateContract;
+import android.support.v7.app.ActionBarActivity;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
@@ -12,6 +16,17 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import java.util.*;
+import com.getpebble.android.kit.Constants;
+import com.getpebble.android.kit.PebbleKit;
+import com.getpebble.android.kit.util.PebbleDictionary;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
+
 
 import com.getpebble.android.kit.PebbleKit;
 
@@ -29,10 +44,12 @@ public class MainActivity extends ActionBarActivity {
     TextView statusTextView;
     Boolean pebbleConnected;
     ToggleButton startStopBtn;
+    LineChart chart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         statusTextView = (TextView) findViewById(R.id.pebbelStatus);
         statusTextView.setText("Waiting for Pebble Status...");
@@ -57,6 +74,67 @@ public class MainActivity extends ActionBarActivity {
 
 
     UUID PEBBLE_APP_UUID = UUID.fromString("4f1ba7a6-5836-48cf-986e-dc9f3f8916bb");
+
+    private void addEntry(LineData lineData, int count){
+
+        /*
+        int mult = 16;
+       // lineData.removeDataSet(count);
+        float val = (float) (Math.random() * mult) + 3;// + (float)
+      //  int valInt = (int) (Math.random() * 3) + 3;// + (float)
+        Entry entry = new Entry(val, count);
+        lineData.addEntry(entry,count);
+        */
+
+    }
+
+    public void addData(View view){
+        LineChart chart = (LineChart) findViewById(R.id.chart);
+        for ( int i = 0 ; i < 15 ; i++) {
+            this.addEntry(chart.getData(),i);
+        }
+        chart.animateXY(20,20);
+        chart.refreshDrawableState();
+    }
+    private LineData setData(int count, float range) {
+
+        ArrayList<String> xVals = new ArrayList<String>();
+        for (int i = 0; i < count; i++) {
+            xVals.add((i) + "");
+        }
+
+        ArrayList<Entry> yVals = new ArrayList<Entry>();
+
+        for (int i = 0; i < count; i++) {
+            float mult = (range + 1);
+            float val = (float) (Math.random() * mult) + 3;// + (float)
+            // ((mult *
+            // 0.1) / 10);
+            yVals.add(new Entry(val, i));
+        }
+
+        // create a dataset and give it a type
+        LineDataSet set1 = new LineDataSet(yVals, "DataSet 1");
+
+        set1.setLineWidth(2f);
+        set1.setColor(ColorTemplate.getHoloBlue());
+        set1.setCircleColor(ColorTemplate.getHoloBlue());
+        set1.setLineWidth(2f);
+        set1.setCircleSize(4f);
+        set1.setFillAlpha(65);
+        set1.setFillColor(ColorTemplate.getHoloBlue());
+        set1.setHighLightColor(Color.rgb(244, 117, 117));
+
+        ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
+        dataSets.add(set1); // add the datasets
+
+        // create a data object with the datasets
+        LineData data = new LineData(xVals, dataSets);
+
+        // set data
+        return data;
+    }
+
     public void startWatchApp(View view) {
         PebbleKit.startAppOnPebble(getApplicationContext(), PEBBLE_APP_UUID);
     }
@@ -107,11 +185,18 @@ public class MainActivity extends ActionBarActivity {
     public void onToggleClicked(View view){
         // Is the toggle on?
         boolean isStart = ((ToggleButton) view).isChecked();
+        LineChart chart = (LineChart) findViewById(R.id.chart);
+
 
         if (isStart) {
             this.handleStart();
         } else {
             this.handleStop();
+            chart.clear();
+         //   chart.setData(this.setData(55,55));
+         //   chart.animateY(4500);
+        //    chart.refreshDrawableState();
+
 
         }
     }
@@ -149,6 +234,11 @@ public class MainActivity extends ActionBarActivity {
         startActivityForResult(intent, SPEECH_REQUEST_CODE);
     }
 
+    private void showChart(){
+        chart.setData(this.setData(15,15));
+        chart.animateX(300);
+        chart.refreshDrawableState();
+    }
     // This callback is invoked when the Speech Recognizer returns.
     // This is where you process the intent and extract the speech text from the intent.
     @Override
@@ -160,6 +250,8 @@ public class MainActivity extends ActionBarActivity {
             String spokenText = results.get(0);
             // Do something with spokenText
             this.sendAlertToPebble();
+            this.showChart();
+
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
