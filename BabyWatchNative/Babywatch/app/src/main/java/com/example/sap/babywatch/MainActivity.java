@@ -145,12 +145,10 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void handleStart(){
-        showMessage("Start Listening...");
         displaySpeechRecognizer();
     }
 
     private void handleStop(){
-        showMessage("Stopped");
     }
 
     public void sendAlertToPebble() {
