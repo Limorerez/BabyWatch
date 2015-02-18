@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.RecognizerIntent;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,19 +27,26 @@ import java.util.UUID;
 public class MainActivity extends ActionBarActivity {
 
     TextView statusTextView;
+    Boolean pebbleConnected;
+    ToggleButton startStopBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         statusTextView = (TextView) findViewById(R.id.pebbelStatus);
         statusTextView.setText("Waiting for Pebble Status...");
+        startStopBtn = (ToggleButton) findViewById(R.id.startStop);
 
         final Handler handler = new Handler();
         final Runnable r = new Runnable() {
             public void run() {
                 handler.postDelayed(this, 1000);
-                if (PebbleKit.isWatchConnected(getApplicationContext())) {
+                pebbleConnected = PebbleKit.isWatchConnected(getApplicationContext());
+                startStopBtn.setEnabled(pebbleConnected);
+                if (pebbleConnected) {
                     statusTextView.setText("Pebble is now connected");
+
                 } else {
                     statusTextView.setText("Pebble is disconnected");
                 }
@@ -58,7 +67,10 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void handleStart(){
-        showMessage("Start");
+
+        showMessage("Start Listening...");
+        displaySpeechRecognizer();
+
     }
 
     private void handleStop(){
@@ -91,13 +103,13 @@ public class MainActivity extends ActionBarActivity {
         Toast toast = Toast.makeText(context, text, duration);
         toast.show();
     }
+
     public void onToggleClicked(View view){
         // Is the toggle on?
         boolean isStart = ((ToggleButton) view).isChecked();
 
         if (isStart) {
-               this.handleStart();
-               this.sendAlertToPebble();
+            this.handleStart();
         } else {
             this.handleStop();
 
@@ -126,32 +138,29 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-//    private Timer timer;
-//    private TimerTask timerTask;
-//
-//    public void onPause(){
-//        super.onPause();
-//        timer.cancel();
-//    }
-//
-//    public void onResume(){
-//        super.onResume();
-//        try {
-//            timer = new Timer();
-//            timerTask = new TimerTask() {
-//                @Override
-//                public void run() {
-//                    if (PebbleKit.isWatchConnected(getApplicationContext())) {
-//                        statusTextView.setText("Pebble is now connected");
-//                    } else {
-//                        statusTextView.setText("Pebble is disconnected");
-//                    }
-//
-//                }
-//            };
-//            timer.schedule(timerTask, 30000, 30000);
-//        } catch (IllegalStateException e){
-//            android.util.Log.i("Status", "resume error");
-//        }
-//    }
+    private static final int SPEECH_REQUEST_CODE = 0;
+
+    // Create an intent that can start the Speech Recognizer activity
+    private void displaySpeechRecognizer() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        // Start the activity, the intent will be populated with the speech text
+        startActivityForResult(intent, SPEECH_REQUEST_CODE);
+    }
+
+    // This callback is invoked when the Speech Recognizer returns.
+    // This is where you process the intent and extract the speech text from the intent.
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
+            List<String> results = data.getStringArrayListExtra(
+                    RecognizerIntent.EXTRA_RESULTS);
+            String spokenText = results.get(0);
+            // Do something with spokenText
+            this.sendAlertToPebble();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 }

@@ -11,7 +11,7 @@
         android:textOff="Start"
         android:textOn="Stop"
         android:onClick="onToggleClicked"
-        android:id="@+id/toggleButton"
+        android:id="@+id/startStop"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 
