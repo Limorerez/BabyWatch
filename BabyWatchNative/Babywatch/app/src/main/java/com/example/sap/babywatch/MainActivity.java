@@ -2,19 +2,15 @@ package com.example.sap.babywatch;
 
 import android.content.Context;
 import android.content.Intent;
-import android.provider.SyncStateContract;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import java.util.*;
-import com.getpebble.android.kit.Constants;
+
 import com.getpebble.android.kit.PebbleKit;
-import com.getpebble.android.kit.util.PebbleDictionary;
 
 
 import org.json.JSONArray;
@@ -34,14 +30,14 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-    UUID uuid = UUID.fromString("4f1ba7a6-5836-48cf-986e-dc9f3f8916bb");
+    UUID PEBBLE_APP_UUID = UUID.fromString("4f1ba7a6-5836-48cf-986e-dc9f3f8916bb");
     public void startWatchApp(View view) {
-        PebbleKit.startAppOnPebble(getApplicationContext(), uuid);
+        PebbleKit.startAppOnPebble(getApplicationContext(), PEBBLE_APP_UUID);
     }
 
     // Send a broadcast to close the specified application on the connected Pebble
     public void stopWatchApp(View view) {
-        PebbleKit.closeAppOnPebble(getApplicationContext(), uuid);
+        PebbleKit.closeAppOnPebble(getApplicationContext(), PEBBLE_APP_UUID);
     }
 
     private void handleStart(){
@@ -56,8 +52,8 @@ public class MainActivity extends ActionBarActivity {
         final Intent i = new Intent("com.getpebble.action.SEND_NOTIFICATION");
 
         final Map data = new HashMap();
-        data.put("title", "Test Message");
-        data.put("body", "Whoever said nothing was impossible never tried to slam a revolving door.");
+        data.put("title", "Baby's Status");
+        data.put("body", "Hurry! your baby is crying.");
         final JSONObject jsonData = new JSONObject(data);
         final String notificationData = new JSONArray().put(jsonData).toString();
 
