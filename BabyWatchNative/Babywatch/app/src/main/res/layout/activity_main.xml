@@ -14,14 +14,11 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_above="@+id/startStopButton"
-        android:visibility="gone"
-		android:padding="10dp" />
+        android:padding="10dp"/>
 
     <ImageButton
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:editable="false"
-        android:textSize="10dip" />
         android:id="@+id/startStopButton"
         android:src="@drawable/ic_start_button"
         android:onClick="onClicked"
