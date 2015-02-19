@@ -150,15 +150,12 @@ public class MainActivity extends ActionBarActivity {
 
         for (int i = 0; i < count; i++) {
             float mult = (range + 1);
-            float val = (float) (Math.random() * mult) + 3;// + (float)
-            // ((mult *
-            // 0.1) / 10);
+            float val = (float) (Math.random() * mult) + 20;
             yVals.add(new Entry(val, i));
         }
 
         // create a dataset and give it a type
         LineDataSet set1 = new LineDataSet(yVals, "dB");
-
         set1.setLineWidth(2f);
         set1.setColor(ColorTemplate.getHoloBlue());
         set1.setCircleColor(ColorTemplate.getHoloBlue());
@@ -267,10 +264,10 @@ public class MainActivity extends ActionBarActivity {
     private static final int SPEECH_REQUEST_CODE = 0;
 
     private void showChart(){
-        chart.setData(this.setData(15,15));
+        chart.setData(this.setData(45,100));
         Legend l = chart.getLegend();
         l.setTextColor(Color.WHITE);
-        chart.animateX(300);
+        chart.animateX(325);
         chart.refreshDrawableState();
     }
 
