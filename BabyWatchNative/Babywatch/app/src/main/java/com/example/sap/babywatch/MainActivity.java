@@ -50,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
     private SoundMeter mSensor;
     private Handler mHandler = new Handler();
     private static final int POLL_INTERVAL = 150;
-    private int mThreshold = 0;
+    private double mThreshold = 0.5;
     private boolean msgSent = false;
 
 
