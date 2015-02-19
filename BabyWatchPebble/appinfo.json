@@ -1,0 +1,62 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        "location",
+        "configurable"
+    ],
+    "companyName": "tomer65@yahoo.com",
+    "longName": "BabyWatch",
+    "projectType": "pebblejs",
+    "resources": {
+        "media": [
+            {
+                "file": "images/menu_icon.png",
+                "name": "IMAGE_MENU_ICON",
+                "type": "png"
+            },
+            {
+                "file": "images/logo_splash.png",
+                "name": "IMAGE_LOGO_SPLASH",
+                "type": "png"
+            },
+            {
+                "file": "images/tile_splash.png",
+                "name": "IMAGE_TILE_SPLASH",
+                "type": "png"
+            },
+            {
+                "file": "fonts/UbuntuMono-Regular.ttf",
+                "name": "MONO_FONT_14",
+                "type": "font"
+            },
+            {
+                "file": "images/baby_icon_96x96.png",
+                "name": "IMAGES_BABY_ICON_96X96_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/baby_icon_64x64.png",
+                "name": "IMAGES_BABY_ICON_64X64_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/baby_icon_28x28.png",
+                "menuIcon": true,
+                "name": "IMAGES_BABY_ICON_28X28_PNG",
+                "type": "png"
+            },
+            {
+                "file": "images/start_screen.png",
+                "name": "IMAGES_START_SCREEN_PNG",
+                "type": "png"
+            }
+        ]
+    },
+    "shortName": "BabyWatch",
+    "uuid": "749ebe87-42a5-4cb9-8ad3-a9778c52661b",
+    "versionCode": 1,
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": false
+    }
+}
