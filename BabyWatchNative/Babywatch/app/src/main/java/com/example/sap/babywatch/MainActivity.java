@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.speech.RecognizerIntent;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,9 +23,9 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -45,6 +44,55 @@ public class MainActivity extends ActionBarActivity {
     final int START_BTN_RES_ID = R.drawable.startbutton;
     boolean isStart = false;
 
+    private SoundMeter mSensor;
+    private Handler mHandler = new Handler();
+    private static final int POLL_INTERVAL = 150;
+    private int mThreshold = 1;
+    private boolean msgSent = false;
+
+
+    private Runnable mSleepTask = new Runnable() {
+        public void run() {
+            //Log.i("Noise", "runnable mSleepTask");
+
+            start();
+        }
+    };
+
+    private void start() {
+        //Log.i("Noise", "==== start ===");
+
+        try {
+            mSensor.start();
+        } catch (IOException e) {
+            showMessage(e.getMessage());
+        }
+
+        //Noise monitoring start
+        // Runnable(mPollTask) will execute after POLL_INTERVAL
+        mHandler.postDelayed(mPollTask, POLL_INTERVAL);
+    }
+    // Create runnable thread to Monitor Voice
+    private Runnable mPollTask = new Runnable() {
+        public void run() {
+
+            double amp = mSensor.getAmplitude();
+            //Log.i("Noise", "runnable mPollTask");
+            //updateDisplay("Monitoring Voice...", amp);
+
+            if ((amp > mThreshold)) {
+                sendAlertToPebble();
+                showChart();
+                //Log.i("Noise", "==== onCreate ===");
+
+            }
+
+            // Runnable(mPollTask) will again execute after POLL_INTERVAL
+            mHandler.postDelayed(mPollTask, POLL_INTERVAL);
+
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +102,7 @@ public class MainActivity extends ActionBarActivity {
         statusTextView.setText("Waiting for Pebble Status...");
         startStopBtn = (ImageButton) findViewById(R.id.startStopButton);
         chart = (LineChart) findViewById(R.id.chart);
+        mSensor = new SoundMeter();
 
         final Handler handler = new Handler();
         final Runnable r = new Runnable() {
@@ -145,12 +194,20 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void handleStart(){
-        displaySpeechRecognizer();
+        try {
+            mSensor.start();
+        } catch (IOException e) {
+            showMessage(e.getMessage());
+        }
+        mHandler.postDelayed(mPollTask, POLL_INTERVAL);
     }
 
     private void handleStop(){
-        chart.setVisibility(View.VISIBLE);
+        chart.setVisibility(View.GONE);
         chart.clear();
+        mHandler.removeCallbacks(mSleepTask);
+        mHandler.removeCallbacks(mPollTask);
+        mSensor.stop();
     }
 
     public void sendAlertToPebble() {
@@ -215,34 +272,9 @@ public class MainActivity extends ActionBarActivity {
 
     private static final int SPEECH_REQUEST_CODE = 0;
 
-    // Create an intent that can start the Speech Recognizer activity
-    private void displaySpeechRecognizer() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        // Start the activity, the intent will be populated with the speech text
-        startActivityForResult(intent, SPEECH_REQUEST_CODE);
-    }
-
     private void showChart(){
         chart.setData(this.setData(15,15));
         chart.animateX(300);
         chart.refreshDrawableState();
-    }
-    // This callback is invoked when the Speech Recognizer returns.
-    // This is where you process the intent and extract the speech text from the intent.
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode,
-                                    Intent data) {
-        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
-            List<String> results = data.getStringArrayListExtra(
-                    RecognizerIntent.EXTRA_RESULTS);
-            String spokenText = results.get(0);
-            // Do something with spokenText
-            this.sendAlertToPebble();
-            this.showChart();
-
-        }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 }
