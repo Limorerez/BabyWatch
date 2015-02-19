@@ -3,6 +3,7 @@ package com.example.sap.babywatch;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
@@ -14,11 +15,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.getpebble.android.kit.PebbleKit;
+import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.Legend;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
     private SoundMeter mSensor;
     private Handler mHandler = new Handler();
     private static final int POLL_INTERVAL = 150;
-    private int mThreshold = 1;
+    private int mThreshold = 0;
     private boolean msgSent = false;
 
 
@@ -101,7 +104,7 @@ public class MainActivity extends ActionBarActivity {
         statusTextView = (TextView) findViewById(R.id.pebbelStatus);
         statusTextView.setText("Waiting for Pebble Status...");
         startStopBtn = (ImageButton) findViewById(R.id.startStopButton);
-        chart = (LineChart) findViewById(R.id.chart);
+        createChart();
         mSensor = new SoundMeter();
 
         final Handler handler = new Handler();
@@ -121,29 +124,20 @@ public class MainActivity extends ActionBarActivity {
         handler.postDelayed(r, 0000);
     }
 
-    private void addEntry(LineData lineData, int count){
-
-        /*
-        int mult = 16;
-       // lineData.removeDataSet(count);
-        float val = (float) (Math.random() * mult) + 3;// + (float)
-      //  int valInt = (int) (Math.random() * 3) + 3;// + (float)
-        Entry entry = new Entry(val, count);
-        lineData.addEntry(entry,count);
-        */
-
+    private void createChart(){
+        chart = (LineChart) findViewById(R.id.chart);
+        chart.setBackgroundColor(Color.BLACK);
+        chart.setValueTextColor(Color.WHITE);
+        Paint whitePaint = new Paint();
+        whitePaint.setColor(Color.WHITE);
+        Paint blackPaint = new Paint();
+        blackPaint.setColor(Color.BLACK);
+        chart.setPaint(blackPaint, Chart.PAINT_GRID_BACKGROUND);
+        chart.setPaint(blackPaint, Chart.PAINT_GRID);
+        addEmptyData();
     }
 
-    public void addData(View view){
-        for ( int i = 0 ; i < 15 ; i++) {
-            this.addEntry(chart.getData(),i);
-        }
-        chart.animateXY(20, 20);
-        chart.refreshDrawableState();
-
-    }
     private LineData setData(int count, float range) {
-        chart.setVisibility(View.VISIBLE);
         //chart.setUnit("dB Level");
         chart.setDrawYValues(false);
         chart.setDescription(" ");
@@ -203,8 +197,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void handleStop(){
-        chart.setVisibility(View.GONE);
-        chart.clear();
+        addEmptyData();
         mHandler.removeCallbacks(mSleepTask);
         mHandler.removeCallbacks(mPollTask);
         mSensor.stop();
@@ -262,11 +255,12 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_settings:
+//                Intent intent = new Intent(this, PickerPreferences.class);
+//                startActivity(intent);
+//                return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -274,7 +268,24 @@ public class MainActivity extends ActionBarActivity {
 
     private void showChart(){
         chart.setData(this.setData(15,15));
+        Legend l = chart.getLegend();
+        l.setTextColor(Color.WHITE);
         chart.animateX(300);
         chart.refreshDrawableState();
+    }
+
+    private void addEmptyData() {
+
+        // create 30 x-vals
+        String[] xVals = new String[30];
+
+        for (int i = 0; i < 30; i++)
+            xVals[i] = "" + i;
+
+        // create a chartdata object that contains only the x-axis labels (no entries or datasets)
+        LineData data = new LineData(xVals);
+
+        chart.setData(data);
+        chart.invalidate();
     }
 }
