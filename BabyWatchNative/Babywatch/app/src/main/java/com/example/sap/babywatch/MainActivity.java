@@ -40,8 +40,8 @@ public class MainActivity extends ActionBarActivity {
     //Pebble EA76 device
     final UUID ORANGE_UUID = UUID.fromString("749ebe87-42a5-4cb9-8ad3-a9778c52661b");
     final UUID PEBBLE_APP_UUID = ORANGE_UUID;
-    final int STOP_BTN_RES_ID = R.drawable.stopbutton;
-    final int START_BTN_RES_ID = R.drawable.startbutton;
+    final int STOP_BTN_RES_ID = R.drawable.ic_stop_button;
+    final int START_BTN_RES_ID = R.drawable.ic_start_button;
     boolean isStart = false;
 
     private SoundMeter mSensor;
