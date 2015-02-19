@@ -53,6 +53,7 @@ public class MainActivity extends ActionBarActivity {
         statusTextView = (TextView) findViewById(R.id.pebbelStatus);
         statusTextView.setText("Waiting for Pebble Status...");
         startStopBtn = (ImageButton) findViewById(R.id.startStopButton);
+        chart = (LineChart) findViewById(R.id.chart);
 
         final Handler handler = new Handler();
         final Runnable r = new Runnable() {
@@ -85,10 +86,6 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void addData(View view){
-        LineChart chart = (LineChart) findViewById(R.id.chart);
-        chart.setUnit("dB Level");
-        chart.setDrawYValues(false);
-        chart.setDescription(" ");
         for ( int i = 0 ; i < 15 ; i++) {
             this.addEntry(chart.getData(),i);
         }
@@ -97,7 +94,10 @@ public class MainActivity extends ActionBarActivity {
 
     }
     private LineData setData(int count, float range) {
-
+        chart.setVisibility(View.VISIBLE);
+        //chart.setUnit("dB Level");
+        chart.setDrawYValues(false);
+        chart.setDescription(" ");
         ArrayList<String> xVals = new ArrayList<String>();
         for (int i = 0; i < count; i++) {
             xVals.add((i) + "");
@@ -149,6 +149,8 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void handleStop(){
+        chart.setVisibility(View.VISIBLE);
+        chart.clear();
     }
 
     public void sendAlertToPebble() {
@@ -180,16 +182,12 @@ public class MainActivity extends ActionBarActivity {
 
     public void onClicked(View view){
         isStart = !isStart;
-
-        chart = (LineChart) findViewById(R.id.chart);
-
         if (isStart) {
             startStopBtn.setImageResource(STOP_BTN_RES_ID);
             this.handleStart();
         } else {
             startStopBtn.setImageResource(START_BTN_RES_ID);
             this.handleStop();
-            chart.clear();
         }
     }
 
